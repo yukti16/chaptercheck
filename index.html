@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChapterCheck - Readability Analyzer for Authors</title>
+  <meta name="description" content="Free browser-based chapter readability analyzer for authors. Calculate Flesch Reading Ease, analyze sentence difficulty, and fine-tune your book draft instantly.">
+  <!-- Google Fonts: Plus Jakarta Sans & Lora -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Announcement / Banner -->
+  <header class="app-header">
+    <div class="container header-content">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            <path d="M12 6l-2 4h4l-2 4"></path>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="brand-name">ChapterCheck</span>
+          <span class="brand-badge">For Authors</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="privacy-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          100% Browser Local & Private
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero & Main Workspace -->
+  <main class="main-content container">
+    <section class="hero-section">
+      <h1 class="hero-title">Refine Your Story's Rhythm & Readability</h1>
+      <p class="hero-subtitle">
+        Paste your chapter below to analyze readability scores, sentence pacing, and identify the five hardest sentences to perfect your narrative flow.
+      </p>
+    </section>
+
+    <!-- Analyzer Card -->
+    <section class="card input-card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <h2>Chapter Text</h2>
+          <span class="subtitle">Paste your manuscript chapter (markdown or plain text)</span>
+        </div>
+        <div class="input-tools">
+          <button type="button" id="load-sample-btn" class="btn btn-secondary btn-sm">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Load Sample Chapter
+          </button>
+          <button type="button" id="clear-btn" class="btn btn-ghost btn-sm">Clear Text</button>
+        </div>
+      </div>
+
+      <div class="textarea-wrapper">
+        <textarea 
+          id="chapter-input" 
+          placeholder="Paste your chapter text here (e.g. 'The thunderstorm had raged since midnight, casting jagged shadows across the study...')" 
+          rows="12"
+          spellcheck="true"
+        ></textarea>
+        <div class="textarea-footer">
+          <div id="live-counter" class="live-counter">0 words | 0 characters</div>
+          <div class="privacy-note">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            Processed locally in your browser. Your text is never uploaded.
+          </div>
+        </div>
+      </div>
+
+      <!-- Warning alert box (hidden by default) -->
+      <div id="alert-box" class="alert-box hidden" role="alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        <span id="alert-message">Please enter at least 15 words to run a meaningful chapter readability analysis.</span>
+      </div>
+
+      <div class="action-row">
+        <button type="button" id="analyze-btn" class="btn btn-primary btn-lg">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          Analyze Chapter
+        </button>
+      </div>
+    </section>
+
+    <!-- Results Container (Hidden until user clicks Analyze) -->
+    <div id="results-section" class="results-section hidden">
+      
+      <!-- Overview Card -->
+      <div class="card overview-card">
+        <div class="overview-grid">
+          
+          <!-- Primary Score Gauge Card -->
+          <div class="score-display-box">
+            <div class="score-ring-wrapper">
+              <svg class="score-ring" width="140" height="140" viewBox="0 0 140 140">
+                <circle class="score-ring-bg" cx="70" cy="70" r="58"></circle>
+                <circle id="score-ring-fill" class="score-ring-fill" cx="70" cy="70" r="58" stroke-dasharray="364.4" stroke-dashoffset="364.4"></circle>
+              </svg>
+              <div class="score-center-text">
+                <span id="flesch-score-value" class="score-number">--</span>
+                <span class="score-label">Flesch Score</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Score Explanation -->
+          <div class="overview-details">
+            <div class="difficulty-header">
+              <span class="section-tag">Readability Assessment</span>
+              <h3 id="difficulty-level-title" class="difficulty-title">Standard</h3>
+            </div>
+            <p id="difficulty-description" class="difficulty-desc">
+              Your text is easily understood by average readers (approx. 8th to 9th grade level). Suitable for general fiction, young adult, and bestseller prose.
+            </p>
+            <div class="gauge-legend">
+              <div class="legend-bar">
+                <div id="score-pointer" class="pointer" style="left: 65%;"></div>
+              </div>
+              <div class="legend-labels">
+                <span>Hard (0)</span>
+                <span>Standard (60)</span>
+                <span>Easy (100)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Key Metrics Row -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon purple">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          </div>
+          <div class="metric-data">
+            <span class="metric-label">Word Count</span>
+            <span id="metric-word-count" class="metric-value">0</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon blue">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="21" y1="10" x2="3" y2="10"></line>
+              <line x1="21" y1="6" x2="3" y2="6"></line>
+              <line x1="21" y1="14" x2="3" y2="14"></line>
+              <line x1="21" y1="18" x2="3" y2="18"></line>
+            </svg>
+          </div>
+          <div class="metric-data">
+            <span class="metric-label">Sentence Count</span>
+            <span id="metric-sentence-count" class="metric-value">0</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon indigo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+          </div>
+          <div class="metric-data">
+            <span class="metric-label">Avg Words / Sentence</span>
+            <span id="metric-avg-words" class="metric-value">0.0</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon teal">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+          </div>
+          <div class="metric-data">
+            <span class="metric-label">Syllables / Word</span>
+            <span id="metric-avg-syllables" class="metric-value">0.0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hardest Sentences Breakdown & Interactive Text Reader -->
+      <div class="analysis-tabs-card card">
+        <div class="tabs-header">
+          <div class="tabs-buttons">
+            <button type="button" id="tab-hardest-btn" class="tab-btn active">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+              Five Hardest Sentences
+            </button>
+            <button type="button" id="tab-interactive-btn" class="tab-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+              </svg>
+              Highlighted Manuscript View
+            </button>
+          </div>
+          <span class="tab-subtext">Click any sentence card to locate it in the chapter</span>
+        </div>
+
+        <!-- TAB 1: Hardest 5 Sentences List -->
+        <div id="tab-hardest-content" class="tab-content">
+          <div id="hard-sentences-list" class="hard-sentences-list">
+            <!-- Dynamic hard sentence cards generated by JS -->
+          </div>
+        </div>
+
+        <!-- TAB 2: Full Highlighted Text Reader -->
+        <div id="tab-interactive-content" class="tab-content hidden">
+          <div class="manuscript-legend">
+            <span><span class="highlight-swatch rank-1"></span> Rank 1 (Hardest)</span>
+            <span><span class="highlight-swatch rank-2"></span> Rank 2</span>
+            <span><span class="highlight-swatch rank-3"></span> Rank 3</span>
+            <span><span class="highlight-swatch rank-4"></span> Rank 4</span>
+            <span><span class="highlight-swatch rank-5"></span> Rank 5</span>
+          </div>
+          <div id="interactive-text-display" class="manuscript-display">
+            <!-- Dynamic annotated chapter text -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Footer -->
+      <div class="results-actions">
+        <button type="button" id="copy-summary-btn" class="btn btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          Copy Analysis Report
+        </button>
+        <button type="button" id="scroll-top-btn" class="btn btn-ghost">
+          ↑ Back to Top
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container footer-content">
+      <p><strong>ChapterCheck</strong> • Free Readability & Pacing Tool for Fiction & Non-Fiction Authors</p>
+      <p class="footer-small">All processing runs 100% client-side inside your browser. No data, text, or metrics are ever logged or stored.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
